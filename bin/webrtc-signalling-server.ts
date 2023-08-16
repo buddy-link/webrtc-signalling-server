@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { WebrtcSignallingServerStack } from '../lib/webrtc-signalling-server-stack';
+import { WebRtcSignallingServerStack } from '../lib/WebRtcSignallingServerStack';
 
 const app = new cdk.App();
-new WebrtcSignallingServerStack(app, 'WebrtcSignallingServerStack');
+new WebRtcSignallingServerStack(app, 'WebRtcSignallingServerStack');
+
+app.synth();
