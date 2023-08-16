@@ -1,8 +1,8 @@
-# Welcome to your CDK TypeScript project
+# WebRTC Signalling Server
 
-This is a blank project for CDK development with TypeScript.
+A serverless WebRTC signalling server implementation using AWS API Gateway, Lambda, and DynamoDB.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Inspired by [this article](https://medium.com/collaborne-engineering/serverless-yjs-72d0a84326a2).
 
 ## Useful commands
 
