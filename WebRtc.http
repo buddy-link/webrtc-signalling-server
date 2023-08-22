@@ -1,4 +1,4 @@
-WEBSOCKET ws://{{ host }}
+WEBSOCKET {{ url }}
 Content-Type: application/json
 
 {

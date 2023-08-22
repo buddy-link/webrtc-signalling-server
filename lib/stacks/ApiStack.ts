@@ -24,6 +24,7 @@ export class ApiStack extends Stack {
             },
             defaultRouteOptions: {
                 integration: lambdaIntegration,
+                returnResponse: true,
             },
         })
         
