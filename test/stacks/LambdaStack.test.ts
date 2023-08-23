@@ -1,6 +1,5 @@
 import {Template} from "aws-cdk-lib/assertions";
 import {App} from "aws-cdk-lib";
-import {ApiStack} from "../../lib/stacks/ApiStack";
 import {LambdaStack} from "../../lib/stacks/LambdaStack";
 
 describe('The Lambda Stack', () => {
