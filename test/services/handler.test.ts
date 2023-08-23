@@ -42,7 +42,8 @@ describe('handler', () => {
         const result = await handler({
             requestContext: {
                 routeKey: '$default'
-            }
+            },
+            body: '{}',
         } as any);
 
         expect(result.statusCode).toBe(200);
@@ -57,7 +58,8 @@ describe('handler', () => {
             requestContext: {
                 routeKey,
                 connectionId: 'connection-id',
-            }
+            },
+            body: '{}'
         } as any);
 
         expect(result.statusCode).toBe(200);

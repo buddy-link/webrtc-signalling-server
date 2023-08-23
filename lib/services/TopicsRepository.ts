@@ -10,7 +10,7 @@ export default class TopicsRepository {
         this.tableName = tableName;
     }
 
-    async unsubscribeAll(connectionId: string) {
+    async unsubscribeFromAll(connectionId: string) {
         const topics = await this.ddbClient.send(new ScanCommand({
             TableName: this.tableName,
         }));
@@ -28,6 +28,17 @@ export default class TopicsRepository {
             TableName: this.tableName,
             Key: { name: topicName } as any,
             UpdateExpression: 'DELETE receivers :receivers',
+            ExpressionAttributeValues: {
+                ':receivers': [connectionId],
+            } as any,
+        }));
+    }
+
+    async subscribeToTopic(topicName: string, connectionId: string) {
+        await this.ddbClient.send(new UpdateItemCommand({
+            TableName: this.tableName,
+            Key: { name: topicName } as any,
+            UpdateExpression: 'ADD receivers :receivers',
             ExpressionAttributeValues: {
                 ':receivers': [connectionId],
             } as any,

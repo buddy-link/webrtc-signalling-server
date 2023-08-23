@@ -31,7 +31,7 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
                 await handleDisconnect(connectionId, topicsRepository);
                 break;
             case '$default':
-                await handleDefault(connectionId);
+                await handleDefault(connectionId, JSON.parse(event.body!), topicsRepository);
                 break;
         }
         
