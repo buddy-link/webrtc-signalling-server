@@ -3,14 +3,17 @@ import {mockClient} from "aws-sdk-client-mock";
 import {DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
 import {UpdateItemCommand} from "@aws-sdk/client-dynamodb"; 
 import 'aws-sdk-client-mock-jest';
+import TopicsRepository from "../../lib/services/TopicsRepository";
 
 describe('Disconnect', () => {
     let log: any;
     let ddbMock: any;
+    let topicsRepository: TopicsRepository;
 
     beforeEach(() => {
         log = jest.spyOn(console, 'log').mockImplementation(() => {});
         ddbMock = mockClient(DynamoDBDocumentClient);
+        topicsRepository = new TopicsRepository(ddbMock, 'test-topics-table');
     })
 
     afterEach(() => {
@@ -19,7 +22,7 @@ describe('Disconnect', () => {
     })
 
     it('logs that a client disconnected', async () => {
-        await handleDisconnect('connection-id', 'test-topics-table', ddbMock);
+        await handleDisconnect('connection-id', topicsRepository);
 
         expect(log).toBeCalledWith('Disconnected: connection-id');
     });
@@ -33,7 +36,7 @@ describe('Disconnect', () => {
             ]
         });
 
-        await handleDisconnect('connection-1', 'test-topics-table', ddbMock);
+        await handleDisconnect('connection-1', topicsRepository);
         
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',

@@ -4,6 +4,7 @@ import {handleDisconnect} from "./handleDisconnect";
 import {handleDefault} from "./handleDefault";
 import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
 import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
+import TopicsRepository from "./TopicsRepository";
 
 const ddbClient = new DynamoDBClient({});
 const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
@@ -18,9 +19,8 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
         }
     }
     
-    const { TOPICS_TABLE } = process.env;
-    
     try {
+        const topicsRepository = new TopicsRepository(ddbDocClient, process.env.TOPICS_TABLE);
         const { connectionId } = event.requestContext;
         
         switch (event.requestContext.routeKey) {
@@ -28,11 +28,7 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
                 await handleConnect(connectionId);
                 break;
             case '$disconnect':
-                await handleDisconnect(
-                    connectionId,
-                    TOPICS_TABLE,
-                    ddbDocClient
-                );
+                await handleDisconnect(connectionId, topicsRepository);
                 break;
             case '$default':
                 await handleDefault(connectionId);
