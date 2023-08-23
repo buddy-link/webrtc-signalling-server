@@ -16,7 +16,7 @@ export default class TopicsRepository {
         }));
 
         for (const topic of topics?.Items ?? []) {
-            const receivers = topic.receivers ?? [];
+            const receivers = Array.from(topic.receivers ?? new Set());
             if (receivers.includes(connectionId)) {
                 await this.unsubscribeFromTopic(topic.name, connectionId);
             }

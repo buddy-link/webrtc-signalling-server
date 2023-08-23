@@ -30,9 +30,9 @@ describe('Disconnect', () => {
     it('removes the client from each topic they are a receiver on', async () => {
         ddbMock.on(ScanCommand).resolves({
             Items: [
-                { name: 'topic-1', receivers: ['connection-1', 'connection-2'] },
-                { name: 'topic-2', receivers: ['connection-2', 'connection-3'] },
-                { name: 'topic-3', receivers: ['connection-3', 'connection-1'] },
+                { name: 'topic-1', receivers: new Set(['connection-1', 'connection-2']) },
+                { name: 'topic-2', receivers: new Set(['connection-2', 'connection-3']) },
+                { name: 'topic-3', receivers: new Set(['connection-3', 'connection-1']) },
             ]
         });
 
@@ -46,6 +46,26 @@ describe('Disconnect', () => {
                 ':receivers': { SS: ['connection-1'] },
             }
         })
+        expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
+            TableName: 'test-topics-table',
+            Key: { name: { S: 'topic-3' } },
+            UpdateExpression: 'DELETE receivers :receivers',
+            ExpressionAttributeValues: {
+                ':receivers': { SS: ['connection-1'] },
+            }
+        })
+    });
+    
+    it('handles a topic with no receivers', async () => {
+        ddbMock.on(ScanCommand).resolves({
+            Items: [
+                { name: 'topic-1' },
+                { name: 'topic-3', receivers: new Set(['connection-3', 'connection-1']) },
+            ]
+        });
+
+        await handleDisconnect('connection-1', topicsRepository);
+
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
             Key: { name: { S: 'topic-3' } },
