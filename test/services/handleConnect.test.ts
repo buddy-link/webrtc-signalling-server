@@ -1,4 +1,4 @@
-import {handleConnect} from "../../lib/lambdas/handleConnect";
+import {handleConnect} from "../../lib/services/handleConnect";
 
 describe('Connect', () => {
     let log: any;

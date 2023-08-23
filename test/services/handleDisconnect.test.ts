@@ -1,4 +1,4 @@
-import {handleDisconnect} from "../../lib/lambdas/handleDisconnect";
+import {handleDisconnect} from "../../lib/services/handleDisconnect";
 import {mockClient} from "aws-sdk-client-mock";
 import {DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
 import {UpdateItemCommand} from "@aws-sdk/client-dynamodb"; 

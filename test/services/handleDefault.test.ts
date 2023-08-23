@@ -1,4 +1,4 @@
-import {handleDefault} from "../../lib/lambdas/handleDefault";
+import {handleDefault} from "../../lib/services/handleDefault";
 
 describe('Default', () => {
     let log: any;

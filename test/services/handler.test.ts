@@ -1,4 +1,4 @@
-import { handler } from "../../lib/lambdas/handler";
+import { handler } from "../../lib/services/handler";
 import {mockClient} from "aws-sdk-client-mock";
 import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
 

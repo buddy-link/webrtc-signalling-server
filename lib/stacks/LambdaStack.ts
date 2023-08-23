@@ -20,7 +20,7 @@ export class LambdaStack extends Stack {
         this.handler = new NodejsFunction(this, 'WebRtcLambda', {
             runtime: Runtime.NODEJS_18_X,
             handler: 'handler',
-            entry: (join(__dirname, '..', 'lambdas', 'handler.ts')),
+            entry: (join(__dirname, '..', 'services', 'handler.ts')),
             environment: {
                 TOPICS_TABLE: props.topicsTable.tableName,
             }
