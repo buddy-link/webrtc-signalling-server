@@ -26,22 +26,26 @@ export default class TopicsRepository {
     async unsubscribeFromTopic(topicName: string, connectionId: string) {
         await this.ddbClient.send(new UpdateItemCommand({
             TableName: this.tableName,
-            Key: { name: topicName } as any,
+            Key: { name: { 'S': topicName } },
             UpdateExpression: 'DELETE receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': [connectionId],
-            } as any,
+                ':receivers': {
+                    SS: [connectionId]
+                },
+            },
         }));
     }
 
     async subscribeToTopic(topicName: string, connectionId: string) {
         await this.ddbClient.send(new UpdateItemCommand({
             TableName: this.tableName,
-            Key: { name: topicName } as any,
+            Key: { name: { 'S': topicName } },
             UpdateExpression: 'ADD receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': [connectionId],
-            } as any,
+                ':receivers': {
+                    SS: [connectionId]
+                },
+            },
         }));
     }
 }

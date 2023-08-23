@@ -42,19 +42,19 @@ describe('Default', () => {
 
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
-            Key: { name: 'topic-1' } as any,
+            Key: { name: { S: 'topic-1' } },
             UpdateExpression: 'DELETE receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': ['connection-1'],
-            } as any
+                ':receivers': { SS: ['connection-1'] },
+            }
         })
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
-            Key: { name: 'topic-2' } as any,
+            Key: { name: { S: 'topic-2' } },
             UpdateExpression: 'DELETE receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': ['connection-1'],
-            } as any
+                ':receivers': { SS: ['connection-1'] },
+            }
         })
     })
 
@@ -68,19 +68,19 @@ describe('Default', () => {
 
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
-            Key: { name: 'topic-1' } as any,
+            Key: { name: { S: 'topic-1' } },
             UpdateExpression: 'ADD receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': ['connection-1'],
-            } as any
+                ':receivers': { SS: ['connection-1'] },
+            }
         })
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
-            Key: { name: 'topic-2' } as any,
+            Key: { name: { S: 'topic-2' } },
             UpdateExpression: 'ADD receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': ['connection-1'],
-            } as any
+                ':receivers': { SS: ['connection-1'] },
+            }
         })
     })
 

@@ -40,19 +40,19 @@ describe('Disconnect', () => {
         
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
-            Key: { name: 'topic-1' } as any,
+            Key: { name: { S: 'topic-1' } },
             UpdateExpression: 'DELETE receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': ['connection-1'],
-            } as any
+                ':receivers': { SS: ['connection-1'] },
+            }
         })
         expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
             TableName: 'test-topics-table',
-            Key: { name: 'topic-3' } as any,
+            Key: { name: { S: 'topic-3' } },
             UpdateExpression: 'DELETE receivers :receivers',
             ExpressionAttributeValues: {
-                ':receivers': ['connection-1'],
-            } as any
+                ':receivers': { SS: ['connection-1'] },
+            }
         })
     });
 })
