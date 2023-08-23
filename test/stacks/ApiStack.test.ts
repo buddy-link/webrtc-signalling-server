@@ -35,18 +35,12 @@ describe('The Api Stack', () => {
     });
 
     it.each([
-        ['$connect', false],
-        ['$disconnect', false],
-        ['$default', true],
-    ])('adds the %s Route', (RouteKey: string, ReturnResponse: boolean) => {
+        ['$connect'],
+        ['$disconnect'],
+        ['$default'],
+    ])('adds the %s Route', (RouteKey: string) => {
         template.hasResourceProperties('AWS::ApiGatewayV2::Route', {
             RouteKey,
         });
-        
-        if (ReturnResponse) {
-            template.hasResourceProperties('AWS::ApiGatewayV2::Route', {
-                RouteResponseSelectionExpression: RouteKey,
-            });
-        }
     });
 });

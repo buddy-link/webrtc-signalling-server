@@ -1,7 +1,4 @@
 WEBSOCKET {{ url }}
 Content-Type: application/json
 
-{
-  "message": "Hello, world!"
-}
 === wait-for-server

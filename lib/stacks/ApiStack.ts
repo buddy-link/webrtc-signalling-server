@@ -13,18 +13,15 @@ export class ApiStack extends Stack {
     constructor(scope: Construct, id: string, props: ApiStackProps) {
         super(scope, id, props);
         
-        const lambdaIntegration = new WebSocketLambdaIntegration('WebRtcLambdaIntegration', props.handler);
-        
         const webSocketApi = new WebSocketApi(this, 'WebRtcWebSocketApi', {
             connectRouteOptions: {
-                integration: lambdaIntegration,
+                integration: new WebSocketLambdaIntegration('WebRtcConnectIntegration', props.handler),
             },
             disconnectRouteOptions: {
-                integration: lambdaIntegration,
+                integration: new WebSocketLambdaIntegration('WebRtcDisconnectIntegration', props.handler),
             },
             defaultRouteOptions: {
-                integration: lambdaIntegration,
-                returnResponse: true,
+                integration: new WebSocketLambdaIntegration('WebRtcDefaultIntegration', props.handler),
             },
         })
         
