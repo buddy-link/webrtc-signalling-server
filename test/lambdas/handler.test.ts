@@ -1,9 +1,12 @@
 import { handler } from "../../lib/lambdas/handler";
+import {mockClient} from "aws-sdk-client-mock";
+import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
 
 describe('handler', () => {
     const env = process.env;
     let error: any;
     let log: any;
+    let ddbMock: any;
 
     beforeEach(() => {
         jest.resetModules();
@@ -13,12 +16,14 @@ describe('handler', () => {
             ...env,
             TOPICS_TABLE: 'test-topics-table',
         };
+        ddbMock = mockClient(DynamoDBDocumentClient);
     })
     
     afterEach(() => {
         process.env = env;
         error.mockReset();
         log.mockReset();
+        ddbMock.reset();
     })
     
     it('returns a 502 if there is no TOPICS_TABLE environment variable', async () => {
@@ -51,6 +56,7 @@ describe('handler', () => {
         const result = await handler({
             requestContext: {
                 routeKey,
+                connectionId: 'connection-id',
             }
         } as any);
 

@@ -2,6 +2,11 @@ import {APIGatewayProxyStructuredResultV2, APIGatewayProxyWebsocketEventV2} from
 import {handleConnect} from "./handleConnect";
 import {handleDisconnect} from "./handleDisconnect";
 import {handleDefault} from "./handleDefault";
+import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
+import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
+
+const ddbClient = new DynamoDBClient({});
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
 
 export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<APIGatewayProxyStructuredResultV2> {
     if (!process.env.TOPICS_TABLE) {
@@ -13,16 +18,24 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
         }
     }
     
+    const { TOPICS_TABLE } = process.env;
+    
     try {
+        const { connectionId } = event.requestContext;
+        
         switch (event.requestContext.routeKey) {
             case '$connect':
-                await handleConnect(event.requestContext.connectionId);
+                await handleConnect(connectionId);
                 break;
             case '$disconnect':
-                await handleDisconnect(event.requestContext.connectionId);
+                await handleDisconnect(
+                    connectionId,
+                    TOPICS_TABLE,
+                    ddbDocClient
+                );
                 break;
             case '$default':
-                await handleDefault(event.requestContext.connectionId);
+                await handleDefault(connectionId);
                 break;
         }
         
