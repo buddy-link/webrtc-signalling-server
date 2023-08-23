@@ -2,6 +2,7 @@ import {Template} from "aws-cdk-lib/assertions";
 import {App} from "aws-cdk-lib";
 import {ApiStack} from "../../lib/stacks/ApiStack";
 import {LambdaStack} from "../../lib/stacks/LambdaStack";
+import {DataStack} from "../../lib/stacks/DataStack";
 
 describe('The Api Stack', () => {
     let template: Template;
@@ -10,8 +11,12 @@ describe('The Api Stack', () => {
         const app = new App({
             outdir: 'cdk.out',
         });
+        const dataStack = new DataStack(app, 'DataStack', {
+            stageName: 'Production',    
+        })
         const lambdaStack = new LambdaStack(app, 'LambdaStack', {
             stageName: 'Production',
+            topicsTable: dataStack.topicsTable,
         });
         const apiStack = new ApiStack(app, 'ApiStack', {
             stageName: 'Production',
