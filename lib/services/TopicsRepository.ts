@@ -1,5 +1,5 @@
 import {DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
-import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
+import {GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 
 export default class TopicsRepository {
     private readonly ddbClient: DynamoDBDocumentClient;
@@ -47,5 +47,14 @@ export default class TopicsRepository {
                 },
             },
         }));
+    }
+
+    async getReceiversForTopic(topicName: string): Promise<Array<String>> {
+        const result = await this.ddbClient.send(new GetItemCommand({
+            TableName: this.tableName,
+            Key: { name: { 'S': topicName } },
+        }));
+        
+        return Array.from((result?.Item?.receivers?.SS ?? new Set()) as Set<String>);
     }
 }

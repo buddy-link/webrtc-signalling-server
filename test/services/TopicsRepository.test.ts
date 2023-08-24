@@ -1,6 +1,6 @@
 import {mockClient} from "aws-sdk-client-mock";
 import {DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
-import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
+import {GetItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
 import 'aws-sdk-client-mock-jest';
 import TopicsRepository from "../../lib/services/TopicsRepository";
 
@@ -90,5 +90,24 @@ describe('TopicsRepository', () => {
                 ':receivers': { SS: ['connection-1'] },
             }
         })
+    })
+
+    it('can return the receivers for a topic', async () => {
+        ddbMock.on(GetItemCommand, {
+            TableName: 'test-topics-table',
+            Key: { name: { S: 'topic-1' } },
+        }).resolves({
+            Item: {
+                name: { S: 'topic-1' },
+                receivers: { SS: new Set(['connection-1', 'connection-2']) },
+            }
+        });
+        
+        const result = await topicsRepository.getReceiversForTopic('topic-1');
+
+        expect(result).toEqual([
+            'connection-1',
+            'connection-2',
+        ])
     })
 })
