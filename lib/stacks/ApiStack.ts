@@ -23,6 +23,7 @@ export class ApiStack extends Stack {
             defaultRouteOptions: {
                 integration: new WebSocketLambdaIntegration('WebRtcDefaultIntegration', props.handler),
             },
+            routeSelectionExpression: '$request.body.type',
         })
         
         new WebSocketStage(this, 'WebRtcWebSocketStage', {

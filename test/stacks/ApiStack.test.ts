@@ -28,7 +28,7 @@ describe('The Api Stack', () => {
     it('adds an Api', () => {
         template.hasResourceProperties('AWS::ApiGatewayV2::Api', {
             ProtocolType: 'WEBSOCKET',
-            RouteSelectionExpression: '$request.body.action',
+            RouteSelectionExpression: '$request.body.type',
         });
     });
     
