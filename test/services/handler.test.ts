@@ -1,12 +1,14 @@
 import { handler } from "../../lib/services/handler";
 import {mockClient} from "aws-sdk-client-mock";
 import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
+import {ApiGatewayManagementApiClient} from "@aws-sdk/client-apigatewaymanagementapi";
 
 describe('handler', () => {
     const env = process.env;
     let error: any;
     let log: any;
     let ddbMock: any;
+    let apiClientMock: any;
 
     beforeEach(() => {
         jest.resetModules();
@@ -17,6 +19,7 @@ describe('handler', () => {
             TOPICS_TABLE: 'test-topics-table',
         };
         ddbMock = mockClient(DynamoDBDocumentClient);
+        apiClientMock = mockClient(ApiGatewayManagementApiClient);
     })
     
     afterEach(() => {
@@ -24,6 +27,7 @@ describe('handler', () => {
         error.mockReset();
         log.mockReset();
         ddbMock.reset();
+        apiClientMock.reset();
     })
     
     it('returns a 502 if there is no TOPICS_TABLE environment variable', async () => {

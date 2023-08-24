@@ -4,10 +4,12 @@ import {handleDisconnect} from "./handleDisconnect";
 import {handleDefault} from "./handleDefault";
 import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
 import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
+import {ApiGatewayManagementApiClient} from "@aws-sdk/client-apigatewaymanagementapi";
 import TopicsRepository from "./TopicsRepository";
+import EventBus from "./EventBus";
 
-const ddbClient = new DynamoDBClient({});
-const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
+let topicsRepository: TopicsRepository | undefined;
+let eventBus: EventBus | undefined;
 
 export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<APIGatewayProxyStructuredResultV2> {
     if (!process.env.TOPICS_TABLE) {
@@ -20,7 +22,19 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
     }
     
     try {
-        const topicsRepository = new TopicsRepository(ddbDocClient, process.env.TOPICS_TABLE);
+        if (!topicsRepository) {
+            const ddbDocClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+            topicsRepository = new TopicsRepository(ddbDocClient, process.env.TOPICS_TABLE);
+        }
+        if (!eventBus) {
+            const { domainName, stage } = event.requestContext;
+            const callbackUrl = `https://${domainName}/${stage}`;
+            const apiClient = new ApiGatewayManagementApiClient({
+                endpoint: callbackUrl,
+            });
+            eventBus = new EventBus(apiClient, topicsRepository);
+        }
+        
         const { connectionId } = event.requestContext;
         
         switch (event.requestContext.routeKey) {
@@ -31,7 +45,7 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
                 await handleDisconnect(connectionId, topicsRepository);
                 break;
             case '$default':
-                await handleDefault(connectionId, JSON.parse(event.body!), topicsRepository);
+                await handleDefault(connectionId, JSON.parse(event.body!), topicsRepository, eventBus);
                 break;
         }
         
