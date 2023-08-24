@@ -1,24 +1,20 @@
 import {handleDefault} from "../../lib/services/handleDefault";
-import {UpdateItemCommand} from "@aws-sdk/client-dynamodb";
-import TopicsRepository from "../../lib/services/TopicsRepository";
-import {mockClient} from "aws-sdk-client-mock";
-import {DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb";
-import 'aws-sdk-client-mock-jest';
 
 describe('Default', () => {
     let log: any;
-    let ddbMock: any;
-    let topicsRepository: TopicsRepository;
+    let topicsRepository: any;
 
     beforeEach(() => {
         log = jest.spyOn(console, 'log').mockImplementation(() => {});
-        ddbMock = mockClient(DynamoDBDocumentClient);
-        topicsRepository = new TopicsRepository(ddbMock, 'test-topics-table');
+        topicsRepository = {
+            unsubscribeFromAll: jest.fn(() => Promise.resolve()),
+            unsubscribeFromTopic: jest.fn(() => Promise.resolve()),
+            subscribeToTopic: jest.fn(() => Promise.resolve()),
+        }
     })
 
     afterEach(() => {
         log.mockReset();
-        ddbMock.reset();
     })
 
     it('logs that a client sent a message', async () => {
@@ -40,22 +36,8 @@ describe('Default', () => {
         
         await handleDefault('connection-1', unsubscribeEvent, topicsRepository);
 
-        expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
-            TableName: 'test-topics-table',
-            Key: { name: { S: 'topic-1' } },
-            UpdateExpression: 'DELETE receivers :receivers',
-            ExpressionAttributeValues: {
-                ':receivers': { SS: ['connection-1'] },
-            }
-        })
-        expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
-            TableName: 'test-topics-table',
-            Key: { name: { S: 'topic-2' } },
-            UpdateExpression: 'DELETE receivers :receivers',
-            ExpressionAttributeValues: {
-                ':receivers': { SS: ['connection-1'] },
-            }
-        })
+        expect(topicsRepository.unsubscribeFromTopic).toHaveBeenCalledWith('topic-1', 'connection-1')
+        expect(topicsRepository.unsubscribeFromTopic).toHaveBeenCalledWith('topic-2', 'connection-1')
     })
 
     it('handles the subscribe event', async () => {
@@ -66,22 +48,8 @@ describe('Default', () => {
 
         await handleDefault('connection-1', subscribeEvent, topicsRepository);
 
-        expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
-            TableName: 'test-topics-table',
-            Key: { name: { S: 'topic-1' } },
-            UpdateExpression: 'ADD receivers :receivers',
-            ExpressionAttributeValues: {
-                ':receivers': { SS: ['connection-1'] },
-            }
-        })
-        expect(ddbMock).toHaveReceivedCommandWith(UpdateItemCommand, {
-            TableName: 'test-topics-table',
-            Key: { name: { S: 'topic-2' } },
-            UpdateExpression: 'ADD receivers :receivers',
-            ExpressionAttributeValues: {
-                ':receivers': { SS: ['connection-1'] },
-            }
-        })
+        expect(topicsRepository.subscribeToTopic).toHaveBeenCalledWith('topic-1', 'connection-1')
+        expect(topicsRepository.subscribeToTopic).toHaveBeenCalledWith('topic-2', 'connection-1')
     })
 
     it('does nothing if the event has no type', async () => {
