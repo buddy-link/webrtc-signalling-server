@@ -25,6 +25,7 @@
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.92.0-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.92.0-alpha.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.398.0",
     "@aws-sdk/client-dynamodb": "^3.395.0",
     "@aws-sdk/lib-dynamodb": "^3.395.0",
     "@types/aws-lambda": "^8.10.119",
