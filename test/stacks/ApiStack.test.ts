@@ -1,7 +1,6 @@
-import {Template} from "aws-cdk-lib/assertions";
+import {Match, Template} from "aws-cdk-lib/assertions";
 import {App} from "aws-cdk-lib";
 import {ApiStack} from "../../lib/stacks/ApiStack";
-import {LambdaStack} from "../../lib/stacks/LambdaStack";
 import {DataStack} from "../../lib/stacks/DataStack";
 
 describe('The Api Stack', () => {
@@ -12,18 +11,51 @@ describe('The Api Stack', () => {
             outdir: 'cdk.out',
         });
         const dataStack = new DataStack(app, 'DataStack', {
-            stageName: 'Production',    
+            stageName: 'Production',
         })
-        const lambdaStack = new LambdaStack(app, 'LambdaStack', {
+        const apiStack = new ApiStack(app, 'LambdaStack', {
             stageName: 'Production',
             topicsTable: dataStack.topicsTable,
         });
-        const apiStack = new ApiStack(app, 'ApiStack', {
-            stageName: 'Production',
-            handler: lambdaStack.handler
-        });
         template = Template.fromStack(apiStack);
     })
+    
+    it('adds a Lambda', () => {
+        template.hasResourceProperties('AWS::Lambda::Function', {
+            Handler: 'index.handler',
+            Runtime: 'nodejs18.x',
+            Environment: {
+                Variables: {
+                    TOPICS_TABLE: {
+                        'Fn::ImportValue': Match.stringLikeRegexp('WebRtcTopicsTable'),
+                    }
+                }
+            }
+        });
+    });
+    
+    it('adds a Policy', () => {
+        template.hasResourceProperties('AWS::IAM::Policy', {
+            PolicyDocument: {
+                Statement: [
+                    {
+                        Effect: 'Allow',
+                        Action: [
+                            'dynamodb:PutItem',
+                            'dynamodb:Scan',
+                            'dynamodb:GetItem',
+                            'dynamodb:UpdateItem',
+                            'dynamodb:DeleteItem',
+                        ]
+                    },
+                    {
+                        Effect: 'Allow',
+                        Action: "execute-api:ManageConnections"
+                    }
+                ]
+            }
+        });
+    });
     
     it('adds an Api', () => {
         template.hasResourceProperties('AWS::ApiGatewayV2::Api', {
@@ -31,7 +63,7 @@ describe('The Api Stack', () => {
             RouteSelectionExpression: '$request.body.type',
         });
     });
-    
+
     it('adds a Stage', () => {
         template.hasResourceProperties('AWS::ApiGatewayV2::Stage', {
             AutoDeploy: true,
