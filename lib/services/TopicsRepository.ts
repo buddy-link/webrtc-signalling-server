@@ -49,12 +49,12 @@ export default class TopicsRepository {
         }));
     }
 
-    async getReceiversForTopic(topicName: string): Promise<Array<String>> {
+    async getReceiversForTopic(topicName: string): Promise<Array<string>> {
         const result = await this.ddbClient.send(new GetItemCommand({
             TableName: this.tableName,
             Key: { name: { 'S': topicName } },
         }));
         
-        return Array.from((result?.Item?.receivers?.SS ?? new Set()) as Set<String>);
+        return Array.from((result?.Item?.receivers?.SS ?? new Set()) as Set<string>);
     }
 }

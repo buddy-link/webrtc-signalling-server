@@ -11,6 +11,7 @@ describe('Default', () => {
             unsubscribeFromAll: jest.fn(() => Promise.resolve()),
             unsubscribeFromTopic: jest.fn(() => Promise.resolve()),
             subscribeToTopic: jest.fn(() => Promise.resolve()),
+            getReceiversForTopic: jest.fn(() => Promise.resolve([])),
         }
         eventBus = {
             send: jest.fn(() => Promise.resolve()),
@@ -66,6 +67,27 @@ describe('Default', () => {
         expect(eventBus.send).toHaveBeenCalledWith('connection-1', {
             type: 'pong',
         })
+    })
+
+    it('handles the publish event', async () => {
+        const publishEvent = {
+            type: 'publish',
+            topic: 'topic-1',
+            message: 'This is a messsage.',
+            from: 'Jane Doe',
+        } as any;
+        
+        topicsRepository.getReceiversForTopic.mockImplementationOnce(() => Promise.resolve([
+            'connection-1',
+            'connection-2',
+            'connection-3',
+        ]));
+
+        await handleDefault('connection-1', publishEvent, topicsRepository, eventBus);
+
+        expect(eventBus.send).toHaveBeenCalledWith('connection-1', publishEvent)
+        expect(eventBus.send).toHaveBeenCalledWith('connection-2', publishEvent)
+        expect(eventBus.send).toHaveBeenCalledWith('connection-3', publishEvent)
     })
 
     it('does nothing if the event has no type', async () => {
