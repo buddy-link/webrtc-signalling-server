@@ -47,4 +47,17 @@ describe('The Monitor Stack', () => {
             Unit: 'Count',
         });
     });
+
+    it('adds a MessageCount Alarm', () => {
+        template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+            ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+            EvaluationPeriods: 1,
+            MetricName: 'MessageCount',
+            Namespace: 'AWS/ApiGateway',
+            Period: 60,
+            Statistic: 'Sum',
+            Threshold: 240,
+            Unit: 'Count',
+        });
+    });
 });

@@ -38,6 +38,7 @@ export class MonitorStack extends Stack {
             topicName: 'WebRtcAlarmTopic',
         });
         alarmTopic.addSubscription(new LambdaSubscription(webHookLambda));
+        const topicAction = new SnsAction(alarmTopic);
         
         const executionErrorAlarm = new Alarm(this, 'WebRtcExecutionErrorAlarm', {
             metric: new Metric({
@@ -54,9 +55,25 @@ export class MonitorStack extends Stack {
             threshold: 5,
             alarmName: 'WebRtcExecutionErrorAlarm',
         });
-        
-        const topicAction = new SnsAction(alarmTopic);
         executionErrorAlarm.addAlarmAction(topicAction);
         executionErrorAlarm.addOkAction(topicAction);
+        
+        const messageCountAlarm = new Alarm(this, 'WebRtcMessageCountAlarm', {
+            metric: new Metric({
+                metricName: 'MessageCount',
+                namespace: 'AWS/ApiGateway',
+                period: Duration.minutes(1),
+                statistic: 'Sum',
+                unit: Unit.COUNT,
+                dimensionsMap: {
+                    ApiId: props.webSocketApi.apiId,
+                }
+            }),
+            evaluationPeriods: 1,
+            threshold: 240,
+            alarmName: 'WebRtcMessageCountAlarm',
+        });
+        messageCountAlarm.addAlarmAction(topicAction);
+        messageCountAlarm.addOkAction(topicAction);
     }
 }

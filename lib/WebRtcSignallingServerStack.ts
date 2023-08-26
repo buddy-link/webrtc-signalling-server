@@ -24,16 +24,6 @@ export class WebRtcSignallingServerStack extends cdk.Stack {
     });
     
     const testStep = new CodeBuildStep('Test', {
-      partialBuildSpec: BuildSpec.fromObject({
-        version: '0.2',
-        phases: {
-          install: {
-            'runtime-versions': {
-                nodejs: 18
-            }
-          }
-        }
-      }),
       commands: [
           'npm ci',
           'npm test',

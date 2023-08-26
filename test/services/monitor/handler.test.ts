@@ -3,11 +3,11 @@ import {handler} from "../../../lib/services/monitor/handler";
 describe('handler', () => {
     const env = process.env;
     let error: any;
-    const fetchSpy = jest.spyOn(global, 'fetch');
-    fetchSpy.mockImplementation(() => Promise.resolve({ text: () => 'https://localhost:3000/' } as any));
+    const fetchSpy = jest.fn(() => Promise.resolve({ text: () => 'https://localhost:3000/' } as any));
 
     beforeEach(() => {
         jest.resetModules();
+        global.fetch = fetchSpy;
         error = jest.spyOn(console, 'error').mockImplementation(() => {});
         process.env = {
             ...env,
@@ -19,6 +19,9 @@ describe('handler', () => {
         jest.clearAllMocks();
         process.env = env;
         error.mockReset();
+        fetchSpy.mockClear();
+        // @ts-ignore
+        delete global.fetch;
     })
     
     it('makes a request to the webhook for each record in SnsEvents', async () => {
