@@ -3,7 +3,10 @@ import {handler} from "../../../lib/services/monitor/handler";
 describe('handler', () => {
     const env = process.env;
     let error: any;
-    const fetchSpy = jest.fn(() => Promise.resolve({ text: () => 'https://localhost:3000/' } as any));
+    const secretResponse = {
+        SecretString: "https://localhost:3000/",
+    };
+    const fetchSpy = jest.fn(() => Promise.resolve({ json: () => secretResponse } as any));
 
     beforeEach(() => {
         jest.resetModules();

@@ -12,11 +12,12 @@ export async function handler(event: SNSEvent) {
                 'X-Aws-Parameters-Secrets-Token': process.env.AWS_SESSION_TOKEN!,
             }
         });
-        webHookUrl = await response.text();
+        const data = await response.json();
+        webHookUrl = data.SecretString;
     }
     
     for(const record of event.Records) {
-        await fetch(webHookUrl, {
+        await fetch(webHookUrl!, {
             method: 'POST',
             body: JSON.stringify({
                 "text": `Houston, we have a problem: ${record.Sns.Message}`
