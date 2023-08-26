@@ -57,7 +57,6 @@ export class MonitorStack extends Stack {
             alarmName: 'WebRtcExecutionErrorAlarm',
         });
         executionErrorAlarm.addAlarmAction(topicAction);
-        executionErrorAlarm.addOkAction(topicAction);
         
         const messageCountAlarm = new Alarm(this, 'WebRtcMessageCountAlarm', {
             metric: new Metric({
@@ -75,6 +74,5 @@ export class MonitorStack extends Stack {
             alarmName: 'WebRtcMessageCountAlarm',
         });
         messageCountAlarm.addAlarmAction(topicAction);
-        messageCountAlarm.addOkAction(topicAction);
     }
 }
