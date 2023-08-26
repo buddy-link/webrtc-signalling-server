@@ -14,6 +14,8 @@ interface ApiStackProps extends StackProps {
 }
 
 export class ApiStack extends Stack {
+    public readonly webSocketApi: WebSocketApi;
+    
     constructor(scope: Construct, id: string, props: ApiStackProps) {
         super(scope, id, props);
 
@@ -38,7 +40,7 @@ export class ApiStack extends Stack {
             ]
         }))
         
-        const webSocketApi = new WebSocketApi(this, 'WebRtcWebSocketApi', {
+        this.webSocketApi = new WebSocketApi(this, 'WebRtcWebSocketApi', {
             connectRouteOptions: {
                 integration: new WebSocketLambdaIntegration('WebRtcConnectIntegration', handler),
             },
@@ -50,10 +52,10 @@ export class ApiStack extends Stack {
             },
             routeSelectionExpression: '$request.body.type',
         })
-        webSocketApi.grantManageConnections(handler);
+        this.webSocketApi.grantManageConnections(handler);
 
         new WebSocketStage(this, 'WebRtcWebSocketStage', {
-            webSocketApi,
+            webSocketApi: this.webSocketApi,
             stageName: props.stageName!,
             autoDeploy: true,
         });
