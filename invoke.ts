@@ -1,4 +1,4 @@
-import { handler } from "../lib/services/handler";
+import { handler } from "./lib/services/handler";
 
 handler({
     requestContext: {

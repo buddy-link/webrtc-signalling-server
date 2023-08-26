@@ -1,4 +1,30 @@
 WEBSOCKET {{ url }}
 Content-Type: application/json
 
+===
+{
+  "type": "ping" 
+}
 === wait-for-server
+{
+    "type": "subscribe",
+    "topics": [
+        "topic1",
+        "topic2"
+    ]
+}
+===
+{
+  "type": "publish",
+  "topic": "topic1",
+  "message": "Test message",
+  "from": "Me"
+}
+=== wait-for-server
+{
+    "type": "unsubscribe",
+    "topics": [
+        "topic1",
+        "topic2"
+    ]
+}
