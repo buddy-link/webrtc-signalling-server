@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep} from "aws-cdk-lib/pipelines";
 import {ApplicationStage} from "./ApplicationStage";
+import {BuildSpec} from "aws-cdk-lib/aws-codebuild";
 
 export class WebRtcSignallingServerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -23,6 +24,16 @@ export class WebRtcSignallingServerStack extends cdk.Stack {
     });
     
     const testStep = new CodeBuildStep('Test', {
+      partialBuildSpec: BuildSpec.fromObject({
+        version: '0.2',
+        phases: {
+          install: {
+            'runtime-versions': {
+                nodejs: 18
+            }
+          }
+        }
+      }),
       commands: [
           'npm ci',
           'npm test',
