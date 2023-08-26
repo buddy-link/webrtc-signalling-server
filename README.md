@@ -8,7 +8,9 @@ Inspired by [this article](https://medium.com/collaborne-engineering/serverless-
 
 This project uses Node v16.
 
-The AWS CDK app requires the following two secrets to be set in the AWS Secrets Manager: - `github-token`: A GitHub personal access token with the `repo` scope. - `webrtc-slack-webhook-url`: A Slack webhook URL for sending notifications from the monitoring stack.
+The AWS CDK app requires the following two secrets to be set in the AWS Secrets Manager:
+- `github-token`: A GitHub personal access token with the `repo` scope.
+- `webrtc-slack-webhook-url`: A Slack webhook URL for sending notifications from the monitoring stack.
 
 ## Useful commands
 
