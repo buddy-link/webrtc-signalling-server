@@ -32,6 +32,7 @@ describe('The Monitor Stack', () => {
             Layers: [
                 "arn:aws:lambda:eu-west-1:015030872274:layer:AWS-Parameters-and-Secrets-Lambda-Extension:4"
             ],
+            Timeout: 5,
         });
     });
 

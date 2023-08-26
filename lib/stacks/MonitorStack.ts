@@ -27,7 +27,8 @@ export class MonitorStack extends Stack {
             entry: (join(__dirname, '..', 'services', 'monitor', 'handler.ts')),
             layers: [
                 LayerVersion.fromLayerVersionArn(this, 'SecretsExtensionLayer', secretsExtensionArn),
-            ]
+            ],
+            timeout: Duration.seconds(5),
         });
         
         const webHookUrlSecret = Secret.fromSecretNameV2(this, 'WebRtcWebHookUrlSecret', 'webrtc-slack-webhook-url');
