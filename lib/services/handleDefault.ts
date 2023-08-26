@@ -31,11 +31,10 @@ export async function handleDefault(
     topicsRepository: TopicsRepository,
     eventBus: EventBus,
 ) {
-    console.log('Received from: ' + connectionId);
-    
     if (event && event.type) {
         switch(event.type) {
             case "publish":
+                console.log('Handling publish event.');
                 if (event.topic) {
                     const receivers = await topicsRepository.getReceiversForTopic(event.topic);
                     for (const receiver of receivers) {
@@ -44,14 +43,17 @@ export async function handleDefault(
                 }
                 break;
             case 'ping':
+                console.log('Handling ping event.');
                 await eventBus.send(connectionId, { type: 'pong' });
                 break;
             case 'subscribe':
+                console.log('Handling subscribe event.');
                 for (const topic of (event.topics || [])) {
                     await topicsRepository.subscribeToTopic(topic, connectionId);
                 }
                 break;
             case 'unsubscribe':
+                console.log('Handling unsubscribe event.');
                 for (const topic of (event.topics || [])) {
                     await topicsRepository.unsubscribeFromTopic(topic, connectionId);
                 }

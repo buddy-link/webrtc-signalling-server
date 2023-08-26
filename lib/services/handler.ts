@@ -23,10 +23,12 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
     
     try {
         if (!topicsRepository) {
+            console.log('Instantiating topic repository.');
             const ddbDocClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
             topicsRepository = new TopicsRepository(ddbDocClient, process.env.TOPICS_TABLE);
         }
         if (!eventBus) {
+            console.log('Instantiating event bus.');
             const { domainName, stage } = event.requestContext;
             const callbackUrl = `https://${domainName}/${stage}`;
             const apiClient = new ApiGatewayManagementApiClient({
@@ -39,12 +41,15 @@ export async function handler(event: APIGatewayProxyWebsocketEventV2): Promise<A
         
         switch (event.requestContext.routeKey) {
             case '$connect':
+                console.log(`Handling $connect route: ${connectionId}`);
                 await handleConnect(connectionId);
                 break;
             case '$disconnect':
+                console.log(`Handling $disconnect route: ${connectionId}`);
                 await handleDisconnect(connectionId, topicsRepository);
                 break;
             case '$default':
+                console.log(`Handling $default route: ${connectionId}`);
                 await handleDefault(connectionId, JSON.parse(event.body!), topicsRepository, eventBus);
                 break;
         }

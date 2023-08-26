@@ -30,7 +30,7 @@ describe('Default', () => {
         
         await handleDefault('connection-id', event, topicsRepository, eventBus);
 
-        expect(log).toBeCalledWith('Received from: connection-id');
+        expect(log).toBeCalledWith('Handling unsubscribe event.');
     });
     
     it('handles the unsubscribe event', async () => {

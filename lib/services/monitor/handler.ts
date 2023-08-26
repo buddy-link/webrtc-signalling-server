@@ -4,6 +4,7 @@ let webHookUrl: string | undefined;
 
 export async function handler(event: SNSEvent) {
     if (! webHookUrl) {
+        console.log('Retrieving webhook URL.');
         const secretPath = new URL('/secretsmanager/get', 'http://localhost:2773');
         secretPath.searchParams.set('secretId', 'webrtc-slack-webhook-url');
         const response = await fetch(secretPath.toString(), {

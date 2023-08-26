@@ -11,6 +11,7 @@ export default class TopicsRepository {
     }
 
     async unsubscribeFromAll(connectionId: string) {
+        console.debug(`Unsubscribing from all topics: ${connectionId}`);
         const topics = await this.ddbClient.send(new ScanCommand({
             TableName: this.tableName,
         }));
@@ -24,6 +25,7 @@ export default class TopicsRepository {
     }
 
     async unsubscribeFromTopic(topicName: string, connectionId: string) {
+        console.debug(`Unsubscribing from topic: topic=${topicName}, connection=${connectionId}`);
         await this.ddbClient.send(new UpdateItemCommand({
             TableName: this.tableName,
             Key: { name: { 'S': topicName } },
@@ -37,6 +39,7 @@ export default class TopicsRepository {
     }
 
     async subscribeToTopic(topicName: string, connectionId: string) {
+        console.debug(`Subscribing to topic: topic=${topicName}, connection=${connectionId}`);
         await this.ddbClient.send(new UpdateItemCommand({
             TableName: this.tableName,
             Key: { name: { 'S': topicName } },
@@ -50,6 +53,7 @@ export default class TopicsRepository {
     }
 
     async getReceiversForTopic(topicName: string): Promise<Array<string>> {
+        console.debug(`Retrieving receivers for topic: ${topicName}`);
         const result = await this.ddbClient.send(new GetItemCommand({
             TableName: this.tableName,
             Key: { name: { 'S': topicName } },
