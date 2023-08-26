@@ -1,3 +1,3 @@
 export async function handleConnect(connectionId: string) {
-    console.log('Connected: ' + connectionId);
+  console.log("Connected: " + connectionId);
 }
